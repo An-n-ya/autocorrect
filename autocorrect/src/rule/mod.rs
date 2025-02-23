@@ -17,6 +17,8 @@ use crate::result::Severity;
 
 lazy_static! {
     static ref RULES: Vec<Rule> = vec![
+        // Rule: dollar-word
+        Rule::new("dollar-word", word::format_dollar_word),
         // Rule: space-word
         Rule::new("space-word", word::format_space_word),
         // Rule: space-punctuation
@@ -201,6 +203,7 @@ mod tests {
     fn test_default_rule_names() {
         let rule_names = default_rule_names();
         let expect = vec![
+            "dollar-word",
             "space-word",
             "space-punctuation",
             "space-bracket",

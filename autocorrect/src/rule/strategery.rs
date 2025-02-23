@@ -2,6 +2,8 @@
 enum SpaceMode {
     Add,
     Remove,
+    AddDollar,
+    RemoveDollar,
 }
 
 pub struct Strategery {
@@ -26,6 +28,17 @@ impl Strategery {
         }
     }
 
+    pub fn new_dollar(one: &'static str, other: &'static str) -> Self {
+        Strategery {
+            space_mode: SpaceMode::AddDollar,
+            reverse: false,
+            add_space_re: regexp!("({})({})", one, other),
+            add_space_reverse_re: regexp!("({})({})", other, one),
+            remove_space_re: regexp!("({})[ ]+({})", one, other),
+            remove_space_reverse_re: regexp!("({})[ ]+({})", other, one),
+        }
+    }
+
     // Set Strategery for remove space.
     pub fn with_remove_space(mut self) -> Self {
         self.space_mode = SpaceMode::Remove;
@@ -42,7 +55,23 @@ impl Strategery {
         match self.space_mode {
             SpaceMode::Add => self.add_space(text),
             SpaceMode::Remove => self.remove_space(text),
+            SpaceMode::AddDollar => self.add_dollar(text),
+            SpaceMode::RemoveDollar => self.remove_dollar(text),
         }
+    }
+
+    fn add_dollar(&self, text: &str) -> String {
+        let out = self.add_space_re.replace_all(text, "$1$ $2");
+        if !self.reverse {
+            return out.to_string();
+        }
+
+        let out = self.add_space_reverse_re.replace_all(&out, "$1$ $2");
+        out.to_string()
+    }
+
+    fn remove_dollar(&self, text: &str) -> String {
+        self.remove_space(text)
     }
 
     fn add_space(&self, text: &str) -> String {

@@ -18,6 +18,12 @@ lazy_static! {
         // The `#` can'not work, because is related to URL anchor, can't do it.
         Strategery::new(r"[a-zA-Z0-9][+#]+", r"\p{CJK}"),
     ];
+    static ref ADD_DOLLAR_STRATEGIES: Vec<Strategery> = vec![
+        // EnglishLetter, Number
+        // Avoid add space when Letter, Number has %, $, \ prefix, eg. %s, %d, $1, $2, \1, \2, \d, \r, \p ... in source code
+        Strategery::new_dollar(r"[\p{CJK}，。\ ][^%\$\\]", r"[a-zA-Z0-9\[\]]"),
+        Strategery::new_dollar(r"[a-zA-Z0-9]" ,r"[\p{CJK}，。\ ][^%\$\\]"),
+    ];
 
     static ref PUNCTUATION_STRATEGIES: Vec<Strategery> = vec![
         // SpecialSymbol
@@ -59,6 +65,12 @@ lazy_static! {
         // Remove space around fullwidth quotes
         Strategery::new(r"\w|\p{CJK}", r"[“”‘’]").with_remove_space().with_reverse(),
     ];
+}
+
+pub fn format_dollar_word(input: &str) -> String {
+    let mut out = String::from(input);
+    ADD_DOLLAR_STRATEGIES.iter().for_each(|s| out = s.format(&out));
+    out
 }
 
 pub fn format_space_word(input: &str) -> String {
