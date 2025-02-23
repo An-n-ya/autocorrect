@@ -25,6 +25,8 @@ lazy_static! {
         Rule::new("space-bracket", word::format_space_bracket),
         // Rule: space-dash
         Rule::new("space-dash", word::format_space_dash),
+        // Rule: space-dollar
+        Rule::new("space-dollar", word::format_space_dollar),
         // Rule: space-backticks
         Rule::new("space-backticks", word::format_space_backticks),
         // Rule: fullwidth
@@ -203,6 +205,7 @@ mod tests {
             "space-punctuation",
             "space-bracket",
             "space-dash",
+            "space-dollar",
             "space-backticks",
             "fullwidth",
             "halfwidth-word",
@@ -285,6 +288,8 @@ mod tests {
             "2你好[世界]" => (map!{ "space-bracket" => true }, "2 你好[世界]"),
             "代码`code`例子1" => (map!{}, "代码 `code` 例子 1"),
             "代码`code`例子2" => (map!{ "space-backticks" => true }, "代码`code`例子 2"),
+            "公式$formula$例子1" => (map!{}, "公式 $formula$ 例子 1"),
+            "公式$formula$例子2" => (map!{ "space-dollar" => true }, "公式$formula$例子 2"),
             "测试 ，" => (map!{}, "测试，"),
             "测试 ，" => (map!{"no-space-fullwidth"=>true}, "测试 ，"),
         };

@@ -38,6 +38,12 @@ lazy_static! {
         Strategery::new(r"`.+`", r"\p{CJK}"),
     ];
 
+    static ref DOLLARS_STRATEGIES: Vec<Strategery> = vec![
+        // Add space before and after dollar ` near the CJK
+        Strategery::new(r"\p{CJK}", r"\$.+\$"),
+        Strategery::new(r"\$.+\$", r"\p{CJK}"),
+    ];
+
     static ref DASH_STRATEGIES: Vec<Strategery> = vec![
         // Add space before and after dash - near the CJK
         Strategery::new(r"[\p{CJK_N}”’]", r"[\-][\p{CJK_N}\s（【「《“‘]"),
@@ -83,6 +89,13 @@ pub fn format_space_dash(input: &str) -> String {
     out
 }
 
+pub fn format_space_dollar(input: &str) -> String {
+    let mut out = String::from(input);
+    DOLLARS_STRATEGIES
+        .iter()
+        .for_each(|s| out = s.format(&out));
+    out
+}
 pub fn format_space_backticks(input: &str) -> String {
     let mut out = String::from(input);
     BACKTICKS_STRATEGIES
